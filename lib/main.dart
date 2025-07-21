@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_widget.dart';
 
-dynamic main() {
+dynamic main() async {
   runApp(AppWidget());
 }
