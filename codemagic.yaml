@@ -22,18 +22,13 @@ workflows:
         bundle_identifier: $BUNDLE_ID
 
     scripts:
-      - name: Install Shorebird
+      - name: Install Shorebird & Build IPA
         script: |
           curl https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh | bash
           export PATH="$HOME/.shorebird/bin:$PATH"
           shorebird --version
 
-      - name: Install Flutter dependencies
-        script: |
           flutter pub get
-
-      - name: Build IPA with Shorebird
-        script: |
           shorebird flutter build ipa --release
 
     artifacts:
