@@ -1,0 +1,43 @@
+workflows:
+  flutter-shorebird-workflow:
+    name: Flutter iOS with Shorebird
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: app-store-connect
+
+    environment:
+      flutter: stable
+      xcode: latest
+
+      vars:
+        BUNDLE_ID: "com.innove.solucoes"
+        APP_STORE_APPLE_ID: 6748886024
+        XCODE_SCHEME: "Runner"
+        SHOREBIRD_VERSION: "latest"
+
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: $BUNDLE_ID
+
+    scripts:
+      - name: Install Shorebird
+        script: |
+          curl https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh | bash
+          export PATH="$HOME/.shorebird/bin:$PATH"
+          shorebird --version
+
+      - name: Install Flutter dependencies
+        script: |
+          flutter pub get
+
+      - name: Build IPA with Shorebird
+        script: |
+          shorebird flutter build ipa --release
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
