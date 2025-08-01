@@ -36,7 +36,7 @@ workflows:
       - name: Build Release IPA with Shorebird
         script: |
           export PATH="$HOME/.shorebird/bin:$PATH"
-          shorebird release ios --flutter-version=3.22.2 --verbose -- --export-method app-store
+          shorebird release ios --flutter-version=3.29.0 --verbose -- --export-method app-store
 
     artifacts:
       - build/ios/ipa/*.ipa
