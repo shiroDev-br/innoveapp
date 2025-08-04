@@ -1,13 +1,14 @@
 workflows:
   flutter-shorebird-workflow:
     name: Flutter iOS with Shorebird
-    max_build_duration: 200
+    max_build_duration: 120
     instance_type: mac_mini_m2
 
     integrations:
       app_store_connect: app-store-connect
 
     environment:
+      flutter: 3.24.1
       flutter: stable
       xcode: latest
 
