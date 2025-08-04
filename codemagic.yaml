@@ -9,7 +9,6 @@ workflows:
 
     environment:
       flutter: 3.24.1
-      flutter: stable
       xcode: latest
 
       vars:
