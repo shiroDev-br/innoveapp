@@ -8,8 +8,9 @@ workflows:
       app_store_connect: app-store-connect
 
     environment:
-      flutter: stable
+      flutter: 3.29.0
       xcode: latest
+      cocoapods: default
 
       vars:
         BUNDLE_ID: "com.innove.solucoes"
@@ -29,18 +30,53 @@ workflows:
           export PATH="$HOME/.shorebird/bin:$PATH"
           shorebird --version
 
+      - name: Install CocoaPods
+        script: |
+          cd ios
+          pod install --verbose
+          cd ..
+
       - name: Install Flutter dependencies
         script: |
           flutter pub get
+          flutter precache --ios --verbose
+
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles
+
+      - name: Create exportOptions.plist
+        script: |
+          cat <<EOF > exportOptions.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>$CM_TEAM_ID</string>
+            <key>uploadBitcode</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
 
       - name: Build Release IPA with Shorebird
         script: |
           export PATH="$HOME/.shorebird/bin:$PATH"
-          shorebird release ios --flutter-version=3.29.0 --verbose -- --export-method app-store
+          shorebird release ios --flutter-version=3.29.0 --verbose --export-options-plist=exportOptions.plist
 
       - name: Display build logs
         script: |
-          cat /tmp/xcodebuild_logs/*.log
+          if [ -d /tmp/xcodebuild_logs ]; then
+            echo "Xcode build logs:"
+            cat /tmp/xcodebuild_logs/*.log
+          else
+            echo "No Xcode build logs found"
+          fi
 
     artifacts:
       - build/ios/ipa/*.ipa
