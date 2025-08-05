@@ -38,6 +38,10 @@ workflows:
           export PATH="$HOME/.shorebird/bin:$PATH"
           shorebird release ios --flutter-version=3.29.0 --verbose -- --export-method app-store
 
+      - name: Display build logs
+        script: |
+          cat /tmp/xcodebuild_logs/*.log
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
